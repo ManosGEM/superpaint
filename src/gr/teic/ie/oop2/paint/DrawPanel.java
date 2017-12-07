@@ -1,6 +1,7 @@
 package gr.teic.ie.oop2.paint;
 
 import gr.teic.ie.oop2.paint.logger.FileTextLogger;
+import gr.teic.ie.oop2.paint.logger.LoggerFactory;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;
@@ -12,11 +13,15 @@ import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 
 /**
- * This class handles mouse events and uses them to draw shapes. It contains a dynamic stack myShapes which is the shapes drawn on the panel. It contains a
- * dynamic stack clearedShape which is the shapes cleared from the panel. It has many variables for the current shape [type, variable to store shape object,
- * color, fill]. It contains a JLabel called statusLabel for the mouse coordinates It has mutator methods for currentShapeType, currentShapeColor and
- * currentShapeFilled. It has methods for undoing, redoing and clearing shapes. It has a private inner class MouseHandler which extends MouseAdapter and handles
- * mouse and mouse motion events used for drawing the current shape.
+ * This class handles mouse events and uses them to draw shapes. It contains a
+ * dynamic stack myShapes which is the shapes drawn on the panel. It contains a
+ * dynamic stack clearedShape which is the shapes cleared from the panel. It has
+ * many variables for the current shape [type, variable to store shape object,
+ * color, fill]. It contains a JLabel called statusLabel for the mouse
+ * coordinates It has mutator methods for currentShapeType, currentShapeColor
+ * and currentShapeFilled. It has methods for undoing, redoing and clearing
+ * shapes. It has a private inner class MouseHandler which extends MouseAdapter
+ * and handles mouse and mouse motion events used for drawing the current shape.
  */
 public class DrawPanel extends JPanel {
 
@@ -32,8 +37,10 @@ public class DrawPanel extends JPanel {
     JLabel statusLabel; //status label for mouse coordinates
 
     /**
-     * This constructor initializes the dynamic stack for myShapes and clearedShapes. It sets the current shape variables to default values. It initalizes
-     * statusLabel from JLabel passed in. Sets up the panel and adds event handling for mouse events.
+     * This constructor initializes the dynamic stack for myShapes and
+     * clearedShapes. It sets the current shape variables to default values. It
+     * initalizes statusLabel from JLabel passed in. Sets up the panel and adds
+     * event handling for mouse events.
      */
     public DrawPanel(JLabel statusLabel) {
 
@@ -78,69 +85,80 @@ public class DrawPanel extends JPanel {
 
     //Mutator methods for currentShapeType, currentShapeColor and currentShapeFilled
     /**
-     * Sets the currentShapeType to type (0 for line, 1 for rect, 2 for oval) passed in.
+     * Sets the currentShapeType to type (0 for line, 1 for rect, 2 for oval)
+     * passed in.
      */
     public void setCurrentShapeType(int type) {
         currentShapeType = type;
     }
 
     /**
-     * Sets the currentShapeColor to the Color object passed in. The Color object contains the color for the current shape.
+     * Sets the currentShapeColor to the Color object passed in. The Color
+     * object contains the color for the current shape.
      */
     public void setCurrentShapeColor(Color color) {
         currentShapeColor = color;
     }
 
     /**
-     * Sets the boolean currentShapeFilled to boolean filled passed in. If filled=true, current shape is filled. If filled=false, current shape is not filled.
+     * Sets the boolean currentShapeFilled to boolean filled passed in. If
+     * filled=true, current shape is filled. If filled=false, current shape is
+     * not filled.
      */
     public void setCurrentShapeFilled(boolean filled) {
         currentShapeFilled = filled;
     }
 
     /**
-     * Clear the last shape drawn and calls repaint() to redraw the panel if clearedShapes is not empty
+     * Clear the last shape drawn and calls repaint() to redraw the panel if
+     * clearedShapes is not empty
      */
     public void clearLastShape() {
         if (!myShapes.isEmpty()) {
             clearedShapes.addFront(myShapes.removeFront());
             repaint();
             //Logging
-            new FileTextLogger().writeLog("Clear last shape.");
+            LoggerFactory.createLogger().writeLog("Clear last shape.");
         }
     }
 
     /**
-     * Redo the last shape cleared if clearedShapes is not empty It calls repaint() to redraw the panel.
+     * Redo the last shape cleared if clearedShapes is not empty It calls
+     * repaint() to redraw the panel.
      */
     public void redoLastShape() {
         if (!clearedShapes.isEmpty()) {
             myShapes.addFront(clearedShapes.removeFront());
             repaint();
             //Logging
-            new FileTextLogger().writeLog("Redo last shape.");
+            LoggerFactory.createLogger().writeLog("Redo last shape.");
+
         }
     }
 
     /**
-     * Remove all shapes in current drawing. Also makes clearedShapes empty since you cannot redo after clear. It called repaint() to redraw the panel.
+     * Remove all shapes in current drawing. Also makes clearedShapes empty
+     * since you cannot redo after clear. It called repaint() to redraw the
+     * panel.
      */
     public void clearDrawing() {
         myShapes.makeEmpty();
         clearedShapes.makeEmpty();
         repaint();
         //Logging
-        new FileTextLogger().writeLog("Clear drawing.");
+        LoggerFactory.createLogger().writeLog("Clear drawing.");
     }
 
     /**
-     * Private inner class that implements MouseAdapter and does event handling for mouse events.
+     * Private inner class that implements MouseAdapter and does event handling
+     * for mouse events.
      */
     private class MouseHandler extends MouseAdapter {
 
         /**
-         * When mouse is pressed draw a shape object based on type, color and filled. X1,Y1 & X2,Y2 coordinate for the drawn shape are both set to the same X &
-         * Y mouse position.
+         * When mouse is pressed draw a shape object based on type, color and
+         * filled. X1,Y1 & X2,Y2 coordinate for the drawn shape are both set to
+         * the same X & Y mouse position.
          */
         public void mousePressed(MouseEvent event) {
             switch (currentShapeType) //0 for line, 1 for rect, 2 for oval
@@ -162,19 +180,22 @@ public class DrawPanel extends JPanel {
         } // end method mousePressed
 
         /**
-         * When mouse is released set currentShapeObject's x2 & y2 to mouse pos. Then addFront currentShapeObject onto the myShapes dynamic Stack and set
-         * currentShapeObject to null [clearing current shape object since it has been drawn]. Lastly, it clears all shape objects in clearedShapes [because you
-         * cannot redo after a new drawing] and calls repaint() to redraw panel.
+         * When mouse is released set currentShapeObject's x2 & y2 to mouse pos.
+         * Then addFront currentShapeObject onto the myShapes dynamic Stack and
+         * set currentShapeObject to null [clearing current shape object since
+         * it has been drawn]. Lastly, it clears all shape objects in
+         * clearedShapes [because you cannot redo after a new drawing] and calls
+         * repaint() to redraw panel.
          */
         @Override
         public void mouseReleased(MouseEvent event) {
             //sets currentShapeObject x2 & Y2
-            if(currentShapeObject instanceof MyBoundedShape){
-                ((MyBoundedShape)currentShapeObject).setX2(event.getX());
-                ((MyBoundedShape)currentShapeObject).setY2(event.getY());
-            }else if(currentShapeObject instanceof MyLine){
-                ((MyLine)currentShapeObject).setEndPoint(new Point(event.getX(), event.getY())); 
-            }            
+            if (currentShapeObject instanceof MyBoundedShape) {
+                ((MyBoundedShape) currentShapeObject).setX2(event.getX());
+                ((MyBoundedShape) currentShapeObject).setY2(event.getY());
+            } else if (currentShapeObject instanceof MyLine) {
+                ((MyLine) currentShapeObject).setEndPoint(new Point(event.getX(), event.getY()));
+            }
 
             myShapes.addFront(currentShapeObject); //addFront currentShapeObject onto myShapes
 
@@ -185,23 +206,26 @@ public class DrawPanel extends JPanel {
         } // end method mouseReleased
 
         /**
-         * This method gets the mouse pos when it is moving and sets it to statusLabel.
+         * This method gets the mouse pos when it is moving and sets it to
+         * statusLabel.
          */
         public void mouseMoved(MouseEvent event) {
             statusLabel.setText(String.format("Mouse Coordinates X: %d Y: %d", event.getX(), event.getY()));
         } // end method mouseMoved
 
         /**
-         * This method gets the mouse position when it is dragging and sets x2 & y2 of current shape to the mouse pos It also gets the mouse position when it is
-         * dragging and sets it to statusLabel Then it calls repaint() to redraw the panel
+         * This method gets the mouse position when it is dragging and sets x2 &
+         * y2 of current shape to the mouse pos It also gets the mouse position
+         * when it is dragging and sets it to statusLabel Then it calls
+         * repaint() to redraw the panel
          */
         public void mouseDragged(MouseEvent event) {
             //sets currentShapeObject x2 & Y2
-            if(currentShapeObject instanceof MyBoundedShape){
-                ((MyBoundedShape)currentShapeObject).setX2(event.getX());
-                ((MyBoundedShape)currentShapeObject).setY2(event.getY());
-            }else if(currentShapeObject instanceof MyLine){
-                ((MyLine)currentShapeObject).setEndPoint(new Point(event.getX(), event.getY())); 
+            if (currentShapeObject instanceof MyBoundedShape) {
+                ((MyBoundedShape) currentShapeObject).setX2(event.getX());
+                ((MyBoundedShape) currentShapeObject).setY2(event.getY());
+            } else if (currentShapeObject instanceof MyLine) {
+                ((MyLine) currentShapeObject).setEndPoint(new Point(event.getX(), event.getY()));
             }
 
             //sets statusLabel to current mouse position

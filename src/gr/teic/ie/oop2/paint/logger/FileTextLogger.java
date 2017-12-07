@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class FileTextLogger {
+public class FileTextLogger implements MyLogger{
 
     private File logFile = new File("info.log");
     private BufferedWriter bufferedWriter = null;
     private FileWriter fileWriter = null;
 
+    @Override
     public void writeLog(String text) {
         try {
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());

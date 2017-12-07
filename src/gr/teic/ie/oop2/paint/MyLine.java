@@ -1,6 +1,8 @@
 package gr.teic.ie.oop2.paint;
 
+import gr.teic.ie.oop2.paint.logger.DatabaseLogger;
 import gr.teic.ie.oop2.paint.logger.FileTextLogger;
+import gr.teic.ie.oop2.paint.logger.LoggerFactory;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -11,18 +13,23 @@ import java.awt.Point;
  */
 public class MyLine extends MyPointsShape {
 
+    //private static int id;
+
     public MyLine() {
         super();
-        
+        super.setText("Line_" + KeyGenerator.id++);
         //Logging
         new FileTextLogger().writeLog("Line '" + getText() + "' created.");
     }
 
     public MyLine(Point startPoint, Point endPoint, Color color) {
         super(new Point[]{startPoint, endPoint}, color);
-        
+        super.setText("Line_" + KeyGenerator.id++);
+
         //Logging
-        new FileTextLogger().writeLog("Line '" + getText() + "' created.");
+        //new FileTextLogger().writeLog("Line '" + getText() + "' created.");
+        //new DatabaseLogger().writeLog("Line '" + getText() + "' created.");
+        LoggerFactory.createLogger().writeLog("Line '" + getText() + "' created.");
     }
 
     /**

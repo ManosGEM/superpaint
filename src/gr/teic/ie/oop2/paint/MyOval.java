@@ -1,27 +1,29 @@
 package gr.teic.ie.oop2.paint;
 
 import gr.teic.ie.oop2.paint.logger.FileTextLogger;
+import gr.teic.ie.oop2.paint.logger.LoggerFactory;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 /**
- * This class inherits from MyBoundedShape and is responsible for drawing a oval.
+ * This class inherits from MyBoundedShape and is responsible for drawing a
+ * oval.
  */
 public class MyOval extends MyBoundedShape {
-
+    //private static int id;
     public MyOval() {
         super();
-        
+        super.setText("Oval_" + KeyGenerator.id++);
         //Logging
-        new FileTextLogger().writeLog("Oval '" + getText() + "' created.");
+        LoggerFactory.createLogger().writeLog("Oval '" + getText() + "' created.");
     }
 
     public MyOval(int x1, int y1, int x2, int y2, Color color, boolean fill) {
         super(x1, y1, x2, y2, color, fill);
-        
+        super.setText("Line_"+KeyGenerator.id++);
         //Logging
-        new FileTextLogger().writeLog("Oval '" + getText() + "' created.");
+        LoggerFactory.createLogger().writeLog("Oval '" + getText() + "' created.");
     }
 
     /**
